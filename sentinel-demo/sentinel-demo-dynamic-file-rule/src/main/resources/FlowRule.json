@@ -2,7 +2,7 @@
   {
     "resource": "abc",
     "controlBehavior": 0,
-    "count": 20.0,
+    "count": 30.0,
     "grade": 1,
     "limitApp": "default",
     "strategy": 0

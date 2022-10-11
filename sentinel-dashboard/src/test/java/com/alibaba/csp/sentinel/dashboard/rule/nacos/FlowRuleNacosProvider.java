@@ -36,6 +36,7 @@ public class FlowRuleNacosProvider implements DynamicRuleProvider<List<FlowRuleE
 
     @Autowired
     private ConfigService configService;
+
     @Autowired
     private Converter<String, List<FlowRuleEntity>> converter;
 
