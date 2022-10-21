@@ -15,6 +15,8 @@
  */
 package com.alibaba.csp.sentinel.dashboard.datasource.entity;
 
+import com.influxdb.query.FluxRecord;
+
 import java.util.Date;
 
 /**

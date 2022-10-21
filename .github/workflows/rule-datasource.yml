@@ -1,0 +1,54 @@
+name: open-api-mongo 部署
+
+on:
+  push:
+    branches:
+      - 1.8.5-rule-datasource
+
+env:
+  DOCKER_REG_URL: ${{ secrets.ALIYUN_DOCKER_REGISTRY_URL }}
+  DOCKER_NAMESPACE: mendd
+  DOCKER_IMAGE_NAME: sentinel-dashboard
+  DOCKER_TAG: run
+  DOCKERFILE: Dockerfile
+  TRIGGER_RE_DEPLOYMENT_URL: https://cs.console.aliyun.com/hook/trigger?token=xxxxxxx
+  NOTIFICATION_URL: http://webhook.mendd.com:4500/run_deployments
+
+jobs:
+  docker-build-publish-with-cache:
+    name: Build docker image with latest code and publish to run docker registry
+    runs-on: ubuntu-18.04
+    steps:
+
+      - name: Notification
+        run: curl --data "message=【${DOCKER_IMAGE_NAME} ${DOCKER_TAG}环境】开始部署：${{ github.event.head_commit.message }} | ${{ github.actor }}" ${NOTIFICATION_URL}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to docker registry
+        run: |
+          echo ${{ secrets.ALIYUN_DOCKER_REGISTRY_PASSWORD }} | docker login --username=${{ secrets.ALIYUN_DOCKER_REGISTRY_USERNAME }} ${DOCKER_REG_URL} --password-stdin
+
+      - name: Build docker image on self-hosted runner
+        run: |
+          docker build -f ${DOCKERFILE} -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} .
+          docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ${DOCKER_REG_URL}/${DOCKER_NAMESPACE}/${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
+
+      - name: Publish and push image to run registry
+        run: |
+          docker push ${DOCKER_REG_URL}/${DOCKER_NAMESPACE}/${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
+
+      - name: Remove dangling images
+        run: |
+          docker system prune -f
+
+      # - name: Trigger Re-Deployment
+      #   run: curl -X POST ${TRIGGER_RE_DEPLOYMENT_URL}
+
+      - name: Notification
+        run: curl --data "message=【${DOCKER_IMAGE_NAME} ${DOCKER_TAG}环境】docker镜像已更新，K8S部署已开始" ${NOTIFICATION_URL}
+
+      - name: The job has failed
+        if: ${{ failure() }}
+        run: curl --data "message=【${DOCKER_IMAGE_NAME} ${DOCKER_TAG}环境】docker镜像构建失败，请重新尝试部署" ${NOTIFICATION_URL}
