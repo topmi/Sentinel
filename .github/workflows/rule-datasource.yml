@@ -9,7 +9,7 @@ env:
   DOCKER_REG_URL: ${{ secrets.ALIYUN_DOCKER_REGISTRY_URL }}
   DOCKER_NAMESPACE: mendd
   DOCKER_IMAGE_NAME: sentinel-dashboard
-  DOCKER_TAG: run
+  DOCKER_TAG: 1.8.5
   DOCKERFILE: Dockerfile
   TRIGGER_RE_DEPLOYMENT_URL: https://cs.console.aliyun.com/hook/trigger?token=xxxxxxx
   NOTIFICATION_URL: http://webhook.mendd.com:4500/run_deployments
