@@ -18,7 +18,7 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 !/.mvn/wrapper/maven-wrapper.jar
-!sentinel-dashboard/target/sentinel-dashboard.jar
+!sentinel-dashboard/target/
 
 # Eclipse
 .classpath
