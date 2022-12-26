@@ -2,7 +2,7 @@ FROM openjdk:8-jre-alpine
 
 WORKDIR /src
 
-COPY sentinel-dashboard/target/sentinel-dashboard.jar /src
+COPY sentinel-dashboard/target/sentinel-dashboard.jar ./
 
 RUN echo 'Asia/Shanghai' > /etc/timezone
 
